@@ -14,6 +14,7 @@ concurrency:
 
 jobs:
   collect:
+    if: vars.RADAR_DATABASE_MIGRATION_PAUSE != '1'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -62,12 +63,20 @@ jobs:
       - name: Publish to frontend
         if: steps.credentials.outputs.configured == 'true'
         env:
+          RADAR_DATABASE_PRIMARY: ${{ vars.RADAR_DATABASE_PRIMARY || '0' }}
+          TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
+          TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
           FRONTEND_REPO_TOKEN: ${{ secrets.FRONTEND_REPO_TOKEN }}
         run: |
           if [ -z "$FRONTEND_REPO_TOKEN" ]; then
             echo '::notice::FRONTEND_REPO_TOKEN is not configured; JSON is available in the artifact only.'
             echo '### YouTube: 已收集，未發布；請設定 FRONTEND_REPO_TOKEN。' >> "$GITHUB_STEP_SUMMARY"
+            if [ "$RADAR_DATABASE_PRIMARY" = "1" ]; then exit 1; fi
             exit 0
+          fi
+          if [ "$RADAR_DATABASE_PRIMARY" = "1" ] && { [ -z "$TURSO_DATABASE_URL" ] || [ -z "$TURSO_AUTH_TOKEN" ]; }; then
+            echo '::error::Turso primary credentials are required; no data published.'
+            exit 1
           fi
           bash scripts/publish_frontend.sh output/youtube_live.json
           echo '### YouTube: 已收集並發布 data/youtube_live.json。' >> "$GITHUB_STEP_SUMMARY"
