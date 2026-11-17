@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Check collection credentials
@@ -33,7 +33,7 @@ jobs:
             echo '::notice::Missing YouTube credentials; collection skipped.'
             echo '### YouTube: 尚未設定 Secrets，本次未收集、未發布。' >> "$GITHUB_STEP_SUMMARY"
           fi
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         if: steps.credentials.outputs.configured == 'true'
         with:
           python-version: '3.12'
@@ -54,7 +54,7 @@ jobs:
         run: python -m json.tool output/youtube_live.json > /dev/null
       - name: Preserve collected JSON
         if: steps.credentials.outputs.configured == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: youtube-live-json
           path: output/youtube_live.json
