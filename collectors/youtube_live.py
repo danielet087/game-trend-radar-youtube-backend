@@ -14,18 +14,12 @@ import requests
 LOGGER = logging.getLogger(__name__)
 
 YOUTUBE_API_BASE = "https://www.googleapis.com/youtube/v3"
-TWITCH_JSON_URL = (
-    "https://raw.githubusercontent.com/danielet087/game-trend-radar/"
-    "main/data/twitch_live.json"
-)
-STEAM_JSON_URL = (
-    "https://raw.githubusercontent.com/danielet087/game-trend-radar/"
-    "main/data/steam_upcoming.json"
-)
-YOUTUBE_JSON_URL = (
-    "https://raw.githubusercontent.com/danielet087/game-trend-radar/"
-    "main/data/youtube_live.json"
-)
+# The published site: its data is built from the database at each hourly
+# deploy and is no longer kept in the frontend repository's Git.
+SITE_DATA = "https://danielet087.github.io/game-trend-radar/data/"
+TWITCH_JSON_URL = SITE_DATA + "twitch_live.json"
+STEAM_JSON_URL = SITE_DATA + "steam_upcoming.json"
+YOUTUBE_JSON_URL = SITE_DATA + "youtube_live.json"
 
 ASIA_COUNTRIES = {
     "AE","AF","AM","AZ","BH","BD","BN","BT","CN","CY","GE","HK","ID","IL","IN",
